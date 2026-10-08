@@ -1,80 +1,81 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  StyleSheet,
+} from 'react-native';
 import { useRouter } from 'expo-router';
+import { colors, spacing, borderRadius, typography, shadows } from '../../constants/theme';
 
 export default function HomeScreen() {
   const router = useRouter();
 
   return (
     <ScrollView 
-      className="flex-1 bg-slate-50"
-      contentContainerStyle={{ paddingBottom: 40 }}
+      style={styles.container}
+      contentContainerStyle={{ paddingBottom: spacing[10] }}
     >
       {/* Header */}
-      <View className="bg-white border-b border-slate-200 px-4 py-6">
-        <Text className="text-2xl font-bold text-slate-900">
-          City Reporter
-        </Text>
-        <Text className="text-sm text-slate-600 mt-1">
+      <View style={styles.header}>
+        <Text style={styles.appTitle}>City Reporter</Text>
+        <Text style={styles.appSubtitle}>
           Report civic issues and help improve your neighborhood
         </Text>
       </View>
 
       {/* Main Content */}
-      <View className="px-4 py-8">
+      <View style={styles.content}>
         {/* Primary Action Card */}
         <TouchableOpacity
-          className="bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg p-6 mb-6 shadow-md"
+          style={[styles.primaryCard, shadows.md]}
           onPress={() => router.push('/create-report')}
           accessibilityLabel="Create a new report"
           accessibilityHint="Report a civic issue"
         >
-          <Text className="text-4xl mb-2">📝</Text>
-          <Text className="text-lg font-bold text-white mb-1">
-            Report an Issue
-          </Text>
-          <Text className="text-sm text-blue-100">
+          <Text style={styles.cardEmoji}>📝</Text>
+          <Text style={styles.cardTitle}>Report an Issue</Text>
+          <Text style={styles.cardDescription}>
             Document a problem you've found and help us fix it
           </Text>
         </TouchableOpacity>
 
         {/* Info Section */}
-        <View className="bg-white border border-slate-200 rounded-lg p-4 mb-6">
-          <Text className="text-sm font-bold text-slate-900 uppercase mb-3">
-            How It Works
-          </Text>
+        <View style={[styles.infoCard, styles.cardBorder]}>
+          <Text style={styles.sectionTitle}>How It Works</Text>
           
-          <View className="flex-row mb-3">
-            <View className="w-6 h-6 rounded-full bg-blue-100 items-center justify-center mr-3">
-              <Text className="text-sm font-bold text-blue-600">1</Text>
+          <View style={styles.step}>
+            <View style={styles.stepNumber}>
+              <Text style={styles.stepNumberText}>1</Text>
             </View>
-            <View className="flex-1">
-              <Text className="text-sm font-semibold text-slate-900">Report</Text>
-              <Text className="text-xs text-slate-600 mt-0.5">
+            <View style={styles.stepContent}>
+              <Text style={styles.stepTitle}>Report</Text>
+              <Text style={styles.stepDescription}>
                 Tell us about the issue with details and location
               </Text>
             </View>
           </View>
 
-          <View className="flex-row mb-3">
-            <View className="w-6 h-6 rounded-full bg-blue-100 items-center justify-center mr-3">
-              <Text className="text-sm font-bold text-blue-600">2</Text>
+          <View style={styles.step}>
+            <View style={styles.stepNumber}>
+              <Text style={styles.stepNumberText}>2</Text>
             </View>
-            <View className="flex-1">
-              <Text className="text-sm font-semibold text-slate-900">Track</Text>
-              <Text className="text-xs text-slate-600 mt-0.5">
+            <View style={styles.stepContent}>
+              <Text style={styles.stepTitle}>Track</Text>
+              <Text style={styles.stepDescription}>
                 Get a reference number to monitor your report
               </Text>
             </View>
           </View>
 
-          <View className="flex-row">
-            <View className="w-6 h-6 rounded-full bg-blue-100 items-center justify-center mr-3">
-              <Text className="text-sm font-bold text-blue-600">3</Text>
+          <View style={styles.step}>
+            <View style={styles.stepNumber}>
+              <Text style={styles.stepNumberText}>3</Text>
             </View>
-            <View className="flex-1">
-              <Text className="text-sm font-semibold text-slate-900">Impact</Text>
-              <Text className="text-xs text-slate-600 mt-0.5">
+            <View style={styles.stepContent}>
+              <Text style={styles.stepTitle}>Impact</Text>
+              <Text style={styles.stepDescription}>
                 Watch as our team takes action to resolve the issue
               </Text>
             </View>
@@ -82,39 +83,149 @@ export default function HomeScreen() {
         </View>
 
         {/* What to Report */}
-        <View className="bg-white border border-slate-200 rounded-lg p-4">
-          <Text className="text-sm font-bold text-slate-900 uppercase mb-3">
-            What You Can Report
-          </Text>
+        <View style={[styles.infoCard, styles.cardBorder]}>
+          <Text style={styles.sectionTitle}>What You Can Report</Text>
           
-          <View className="space-y-2">
-            <View className="flex-row items-center">
-              <View className="w-1.5 h-1.5 rounded-full bg-slate-400 mr-2" />
-              <Text className="text-sm text-slate-700">Damaged roads and potholes</Text>
-            </View>
-            
-            <View className="flex-row items-center">
-              <View className="w-1.5 h-1.5 rounded-full bg-slate-400 mr-2" />
-              <Text className="text-sm text-slate-700">Broken streetlights</Text>
-            </View>
-            
-            <View className="flex-row items-center">
-              <View className="w-1.5 h-1.5 rounded-full bg-slate-400 mr-2" />
-              <Text className="text-sm text-slate-700">Illegal garbage dumping</Text>
-            </View>
-            
-            <View className="flex-row items-center">
-              <View className="w-1.5 h-1.5 rounded-full bg-slate-400 mr-2" />
-              <Text className="text-sm text-slate-700">Water leaks and flooding</Text>
-            </View>
-            
-            <View className="flex-row items-center">
-              <View className="w-1.5 h-1.5 rounded-full bg-slate-400 mr-2" />
-              <Text className="text-sm text-slate-700">Other public infrastructure problems</Text>
-            </View>
+          <View style={styles.bulletItem}>
+            <View style={styles.bulletPoint} />
+            <Text style={styles.bulletText}>Damaged roads and potholes</Text>
+          </View>
+          
+          <View style={styles.bulletItem}>
+            <View style={styles.bulletPoint} />
+            <Text style={styles.bulletText}>Broken streetlights</Text>
+          </View>
+          
+          <View style={styles.bulletItem}>
+            <View style={styles.bulletPoint} />
+            <Text style={styles.bulletText}>Illegal garbage dumping</Text>
+          </View>
+          
+          <View style={styles.bulletItem}>
+            <View style={styles.bulletPoint} />
+            <Text style={styles.bulletText}>Water leaks and flooding</Text>
+          </View>
+          
+          <View style={styles.bulletItem}>
+            <View style={styles.bulletPoint} />
+            <Text style={styles.bulletText}>Other public infrastructure problems</Text>
           </View>
         </View>
       </View>
     </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.neutral[50],
+  },
+  header: {
+    backgroundColor: colors.neutral[0],
+    borderBottomWidth: 1,
+    borderBottomColor: colors.neutral[200],
+    paddingHorizontal: spacing[4],
+    paddingVertical: spacing[6],
+  },
+  appTitle: {
+    ...typography.pageTitle,
+    color: colors.neutral[900],
+  },
+  appSubtitle: {
+    ...typography.body,
+    color: colors.neutral[600],
+    marginTop: spacing[1],
+  },
+  content: {
+    paddingHorizontal: spacing[4],
+    paddingVertical: spacing[8],
+  },
+  primaryCard: {
+    backgroundColor: colors.primary[600],
+    borderRadius: borderRadius.lg,
+    paddingHorizontal: spacing[6],
+    paddingVertical: spacing[6],
+    marginBottom: spacing[6],
+  },
+  cardEmoji: {
+    fontSize: 48,
+    marginBottom: spacing[2],
+  },
+  cardTitle: {
+    ...typography.sectionHeading,
+    color: colors.neutral[0],
+    marginBottom: spacing[1],
+  },
+  cardDescription: {
+    ...typography.body,
+    color: colors.primary[100],
+  },
+  infoCard: {
+    backgroundColor: colors.neutral[0],
+    borderRadius: borderRadius.lg,
+    paddingHorizontal: spacing[4],
+    paddingVertical: spacing[4],
+    marginBottom: spacing[6],
+  },
+  cardBorder: {
+    borderWidth: 1,
+    borderColor: colors.neutral[200],
+  },
+  sectionTitle: {
+    ...typography.cardHeading,
+    fontWeight: '700',
+    color: colors.neutral[900],
+    marginBottom: spacing[4],
+  },
+  step: {
+    flexDirection: 'row',
+    marginBottom: spacing[3],
+  },
+  stepNumber: {
+    width: 32,
+    height: 32,
+    borderRadius: borderRadius.full,
+    backgroundColor: colors.primary[100],
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: spacing[3],
+    marginTop: spacing[1],
+  },
+  stepNumberText: {
+    ...typography.small,
+    fontWeight: 'bold',
+    color: colors.primary[600],
+  },
+  stepContent: {
+    flex: 1,
+  },
+  stepTitle: {
+    ...typography.small,
+    fontWeight: '600',
+    color: colors.neutral[900],
+  },
+  stepDescription: {
+    ...typography.small,
+    color: colors.neutral[600],
+    marginTop: 4,
+  },
+  bulletItem: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: spacing[2],
+  },
+  bulletPoint: {
+    width: 6,
+    height: 6,
+    borderRadius: borderRadius.full,
+    backgroundColor: colors.neutral[400],
+    marginRight: spacing[2],
+    marginTop: spacing[1],
+  },
+  bulletText: {
+    ...typography.body,
+    color: colors.neutral[700],
+    flex: 1,
+  },
+});

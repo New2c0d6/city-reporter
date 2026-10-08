@@ -7,10 +7,12 @@ import {
   ScrollView,
   ActivityIndicator,
   Alert,
+  StyleSheet,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { apiClient } from '../../services/api';
 import { Category } from '../../types/index';
+import { colors, spacing, borderRadius, typography, shadows } from '../../constants/theme';
 
 type FormErrors = Record<string, string>;
 
@@ -117,60 +119,59 @@ export default function CreateReportScreen() {
 
   if (loadingCategories) {
     return (
-      <View className="flex-1 justify-center items-center bg-slate-50">
-        <ActivityIndicator size="large" color="#2563eb" />
-        <Text className="mt-3 text-sm text-slate-600">Loading categories...</Text>
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={colors.primary[600]} />
+        <Text style={styles.loadingText}>Loading categories...</Text>
       </View>
     );
   }
 
   return (
     <ScrollView 
-      className="flex-1 bg-slate-50"
-      contentContainerStyle={{ paddingBottom: 40 }}
+      style={styles.container}
+      contentContainerStyle={{ paddingBottom: spacing[10] }}
     >
       {/* Header Section */}
-      <View className="bg-white border-b border-slate-200 px-4 py-6">
-        <Text className="text-2xl font-bold text-slate-900 mb-1">
-          Report an Issue
-        </Text>
-        <Text className="text-sm text-slate-600">
-          Help us improve your neighborhood
-        </Text>
+      <View style={styles.header}>
+        <Text style={styles.pageTitle}>Report an Issue</Text>
+        <Text style={styles.subtitle}>Help us improve your neighborhood</Text>
       </View>
 
       {/* Form Content */}
-      <View className="px-4 py-6">
+      <View style={styles.content}>
         {/* Category Selection */}
-        <View className="mb-6">
-          <Text className="text-sm font-semibold text-slate-900 mb-2">
-            Category <Text className="text-red-600">*</Text>
+        <View style={styles.fieldContainer}>
+          <Text style={styles.label}>
+            Category <Text style={styles.required}>*</Text>
           </Text>
           <TouchableOpacity
             onPress={() => setShowCategoryDropdown(!showCategoryDropdown)}
-            className={`border rounded-md px-3 py-3 bg-white flex-row justify-between items-center ${
-              errors.categoryId ? 'border-red-500' : 'border-slate-300'
-            }`}
+            style={[
+              styles.dropdown,
+              errors.categoryId && styles.inputError,
+            ]}
             disabled={isSubmitting}
           >
             <Text
-              className={`text-base ${
-                selectedCategory ? 'text-slate-900' : 'text-slate-400'
-              }`}
+              style={[
+                styles.dropdownText,
+                !selectedCategory && styles.placeholderText,
+              ]}
             >
               {selectedCategory?.name || 'Select a category...'}
             </Text>
-            <Text className="text-slate-400">▼</Text>
+            <Text style={styles.dropdownArrow}>▼</Text>
           </TouchableOpacity>
 
           {showCategoryDropdown && (
-            <View className="border border-slate-300 border-t-0 rounded-b-md bg-white">
+            <View style={styles.dropdownMenu}>
               {categories.map((category) => (
                 <TouchableOpacity
                   key={category.id}
-                  className={`px-3 py-3 border-b border-slate-100 flex-row justify-between items-center ${
-                    categoryId === category.id ? 'bg-blue-50' : ''
-                  }`}
+                  style={[
+                    styles.dropdownItem,
+                    categoryId === category.id && styles.dropdownItemSelected,
+                  ]}
                   onPress={() => {
                     setCategoryId(category.id);
                     setShowCategoryDropdown(false);
@@ -178,16 +179,15 @@ export default function CreateReportScreen() {
                   }}
                 >
                   <Text
-                    className={`text-base ${
-                      categoryId === category.id
-                        ? 'text-blue-700 font-semibold'
-                        : 'text-slate-900'
-                    }`}
+                    style={[
+                      styles.dropdownItemText,
+                      categoryId === category.id && styles.dropdownItemTextSelected,
+                    ]}
                   >
                     {category.name}
                   </Text>
                   {categoryId === category.id && (
-                    <Text className="text-blue-600">✓</Text>
+                    <Text style={styles.checkmark}>✓</Text>
                   )}
                 </TouchableOpacity>
               ))}
@@ -195,23 +195,22 @@ export default function CreateReportScreen() {
           )}
 
           {errors.categoryId && (
-            <Text className="text-red-600 text-sm mt-1">
-              {errors.categoryId}
-            </Text>
+            <Text style={styles.errorText}>{errors.categoryId}</Text>
           )}
         </View>
 
         {/* Title Input */}
-        <View className="mb-6">
-          <Text className="text-sm font-semibold text-slate-900 mb-2">
-            Title <Text className="text-red-600">*</Text>
+        <View style={styles.fieldContainer}>
+          <Text style={styles.label}>
+            Title <Text style={styles.required}>*</Text>
           </Text>
           <TextInput
-            className={`border rounded-md px-3 py-3 text-base bg-white ${
-              errors.title ? 'border-red-500' : 'border-slate-300'
-            }`}
+            style={[
+              styles.input,
+              errors.title && styles.inputError,
+            ]}
             placeholder="Brief summary of the issue"
-            placeholderTextColor="#a1a5b4"
+            placeholderTextColor={colors.neutral[400]}
             value={title}
             onChangeText={(text) => {
               setTitle(text);
@@ -219,33 +218,32 @@ export default function CreateReportScreen() {
             }}
             maxLength={255}
             editable={!isSubmitting}
-            style={{ color: '#0f172a' }}
             accessibilityLabel="Report title"
             accessibilityHint="Enter a brief summary of the issue"
           />
-          <View className="flex-row justify-between items-center mt-1">
-            <Text className="text-xs text-slate-500">
+          <View style={styles.charCountContainer}>
+            <Text style={styles.charCount}>
               {title.length} / 255 characters
             </Text>
           </View>
           {errors.title && (
-            <Text className="text-red-600 text-sm mt-1">
-              {errors.title}
-            </Text>
+            <Text style={styles.errorText}>{errors.title}</Text>
           )}
         </View>
 
         {/* Description Input */}
-        <View className="mb-6">
-          <Text className="text-sm font-semibold text-slate-900 mb-2">
-            Description <Text className="text-red-600">*</Text>
+        <View style={styles.fieldContainer}>
+          <Text style={styles.label}>
+            Description <Text style={styles.required}>*</Text>
           </Text>
           <TextInput
-            className={`border rounded-md px-3 py-3 text-base bg-white ${
-              errors.description ? 'border-red-500' : 'border-slate-300'
-            }`}
+            style={[
+              styles.input,
+              styles.textArea,
+              errors.description && styles.inputError,
+            ]}
             placeholder="Provide details about the issue"
-            placeholderTextColor="#a1a5b4"
+            placeholderTextColor={colors.neutral[400]}
             value={description}
             onChangeText={(text) => {
               setDescription(text);
@@ -255,32 +253,29 @@ export default function CreateReportScreen() {
             multiline
             numberOfLines={5}
             editable={!isSubmitting}
-            style={{ color: '#0f172a', textAlignVertical: 'top' }}
+            textAlignVertical="top"
             accessibilityLabel="Report description"
             accessibilityHint="Provide detailed information about the issue"
           />
-          <View className="flex-row justify-between items-center mt-1">
-            <Text className="text-xs text-slate-500">
+          <View style={styles.charCountContainer}>
+            <Text style={styles.charCount}>
               {description.length} / 5,000 characters
             </Text>
           </View>
           {errors.description && (
-            <Text className="text-red-600 text-sm mt-1">
-              {errors.description}
-            </Text>
+            <Text style={styles.errorText}>{errors.description}</Text>
           )}
-          <Text className="text-xs text-slate-500 mt-2">
+          <Text style={styles.helperText}>
             Be specific about the location and what needs to be fixed.
           </Text>
         </View>
 
         {/* Submit Button */}
         <TouchableOpacity
-          className={`rounded-md py-3 items-center justify-center mb-4 ${
-            !isFormValid || isSubmitting
-              ? 'bg-slate-300'
-              : 'bg-blue-600'
-          }`}
+          style={[
+            styles.submitButton,
+            (!isFormValid || isSubmitting) && styles.submitButtonDisabled,
+          ]}
           onPress={handleSubmit}
           disabled={!isFormValid || isSubmitting}
           accessibilityLabel="Submit report"
@@ -289,19 +284,193 @@ export default function CreateReportScreen() {
           {isSubmitting ? (
             <ActivityIndicator color="white" />
           ) : (
-            <Text className="text-white text-base font-semibold">
-              Submit Report
-            </Text>
+            <Text style={styles.submitButtonText}>Submit Report</Text>
           )}
         </TouchableOpacity>
 
         {/* Info Section */}
-        <View className="bg-blue-50 border border-blue-200 rounded-md px-3 py-3">
-          <Text className="text-sm text-slate-700 leading-5">
-            <Text className="font-semibold">Next steps:</Text> Photos and location can be added after you submit this report.
+        <View style={styles.infoBox}>
+          <Text style={styles.infoText}>
+            <Text style={styles.infoBold}>Next steps:</Text> Photos and location can be added after you submit this report.
           </Text>
         </View>
       </View>
     </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.neutral[50],
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: colors.neutral[50],
+  },
+  loadingText: {
+    marginTop: spacing[3],
+    ...typography.body,
+    color: colors.neutral[600],
+  },
+  header: {
+    backgroundColor: colors.neutral[0],
+    borderBottomWidth: 1,
+    borderBottomColor: colors.neutral[200],
+    paddingHorizontal: spacing[4],
+    paddingVertical: spacing[6],
+  },
+  pageTitle: {
+    ...typography.pageTitle,
+    color: colors.neutral[900],
+    marginBottom: spacing[1],
+  },
+  subtitle: {
+    ...typography.body,
+    color: colors.neutral[600],
+  },
+  content: {
+    paddingHorizontal: spacing[4],
+    paddingVertical: spacing[6],
+  },
+  fieldContainer: {
+    marginBottom: spacing[6],
+  },
+  label: {
+    ...typography.small,
+    fontWeight: '600',
+    color: colors.neutral[900],
+    marginBottom: spacing[2],
+  },
+  required: {
+    color: colors.danger[600],
+  },
+  dropdown: {
+    borderWidth: 1,
+    borderColor: colors.neutral[300],
+    borderRadius: borderRadius.md,
+    paddingHorizontal: spacing[3],
+    paddingVertical: spacing[3],
+    backgroundColor: colors.neutral[0],
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  dropdownText: {
+    ...typography.bodyLarge,
+    color: colors.neutral[900],
+    flex: 1,
+  },
+  placeholderText: {
+    color: colors.neutral[400],
+  },
+  dropdownArrow: {
+    color: colors.neutral[400],
+    marginLeft: spacing[2],
+  },
+  dropdownMenu: {
+    borderWidth: 1,
+    borderTopWidth: 0,
+    borderColor: colors.neutral[300],
+    borderBottomLeftRadius: borderRadius.md,
+    borderBottomRightRadius: borderRadius.md,
+    backgroundColor: colors.neutral[0],
+    marginTop: -1,
+  },
+  dropdownItem: {
+    paddingHorizontal: spacing[3],
+    paddingVertical: spacing[3],
+    borderBottomWidth: 1,
+    borderBottomColor: colors.neutral[100],
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  dropdownItemSelected: {
+    backgroundColor: colors.primary[50],
+  },
+  dropdownItemText: {
+    ...typography.bodyLarge,
+    color: colors.neutral[900],
+  },
+  dropdownItemTextSelected: {
+    color: colors.primary[700],
+    fontWeight: '600',
+  },
+  checkmark: {
+    color: colors.primary[600],
+    fontWeight: '600',
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: colors.neutral[300],
+    borderRadius: borderRadius.md,
+    paddingHorizontal: spacing[3],
+    paddingVertical: spacing[3],
+    ...typography.bodyLarge,
+    backgroundColor: colors.neutral[0],
+    color: colors.neutral[900],
+  },
+  textArea: {
+    minHeight: 120,
+    textAlignVertical: 'top',
+  },
+  inputError: {
+    borderColor: colors.danger[500],
+  },
+  charCountContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    marginTop: spacing[1],
+  },
+  charCount: {
+    ...typography.small,
+    color: colors.neutral[500],
+  },
+  helperText: {
+    ...typography.small,
+    color: colors.neutral[500],
+    marginTop: spacing[2],
+  },
+  errorText: {
+    color: colors.danger[600],
+    ...typography.small,
+    marginTop: spacing[1],
+  },
+  submitButton: {
+    backgroundColor: colors.primary[600],
+    borderRadius: borderRadius.md,
+    paddingVertical: spacing[3],
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: spacing[4],
+    minHeight: 50,
+  },
+  submitButtonDisabled: {
+    backgroundColor: colors.neutral[300],
+    opacity: 0.6,
+  },
+  submitButtonText: {
+    color: colors.neutral[0],
+    ...typography.cardHeading,
+  },
+  infoBox: {
+    backgroundColor: colors.primary[50],
+    borderWidth: 1,
+    borderColor: colors.primary[200],
+    borderRadius: borderRadius.md,
+    paddingHorizontal: spacing[3],
+    paddingVertical: spacing[3],
+  },
+  infoText: {
+    ...typography.small,
+    color: colors.neutral[700],
+    lineHeight: 20,
+  },
+  infoBold: {
+    fontWeight: '600',
+  },
+});

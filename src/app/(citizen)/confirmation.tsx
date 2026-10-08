@@ -6,10 +6,12 @@ import {
   ScrollView,
   ActivityIndicator,
   Alert,
+  StyleSheet,
 } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { apiClient } from '../../services/api';
 import { Report } from '../../types/index';
+import { colors, spacing, borderRadius, typography, shadows } from '../../constants/theme';
 
 export default function ConfirmationScreen() {
   const router = useRouter();
@@ -42,28 +44,26 @@ export default function ConfirmationScreen() {
 
   if (loading) {
     return (
-      <View className="flex-1 justify-center items-center bg-slate-50">
-        <ActivityIndicator size="large" color="#2563eb" />
-        <Text className="mt-3 text-sm text-slate-600">Loading your report...</Text>
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={colors.primary[600]} />
+        <Text style={styles.loadingText}>Loading your report...</Text>
       </View>
     );
   }
 
   if (!report) {
     return (
-      <View className="flex-1 justify-center items-center bg-slate-50 px-4">
-        <View className="items-center">
-          <Text className="text-lg font-bold text-slate-900 mb-2">
-            Something went wrong
-          </Text>
-          <Text className="text-sm text-slate-600 text-center mb-6">
+      <View style={styles.errorContainer}>
+        <View style={styles.errorContent}>
+          <Text style={styles.errorTitle}>Something went wrong</Text>
+          <Text style={styles.errorMessage}>
             We couldn't load your report details. Please try again.
           </Text>
           <TouchableOpacity
-            className="bg-blue-600 py-2 px-6 rounded-md"
+            style={styles.retryButton}
             onPress={loadReport}
           >
-            <Text className="text-white text-sm font-semibold">Try Again</Text>
+            <Text style={styles.retryButtonText}>Try Again</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -84,120 +84,300 @@ export default function ConfirmationScreen() {
 
   return (
     <ScrollView 
-      className="flex-1 bg-slate-50"
-      contentContainerStyle={{ paddingBottom: 40 }}
+      style={styles.container}
+      contentContainerStyle={{ paddingBottom: spacing[10] }}
     >
       {/* Success Section */}
-      <View className="bg-white border-b border-slate-200">
-        <View className="px-4 py-8 items-center">
-          {/* Success Icon */}
-          <View className="w-12 h-12 rounded-full bg-green-100 items-center justify-center mb-3">
-            <Text className="text-2xl">✓</Text>
+      <View style={styles.successSection}>
+        <View style={styles.successContent}>
+          <View style={styles.successIcon}>
+            <Text style={styles.checkIcon}>✓</Text>
           </View>
           
-          <Text className="text-2xl font-bold text-slate-900 text-center">
-            Report Submitted
-          </Text>
-          <Text className="text-sm text-slate-600 text-center mt-1">
+          <Text style={styles.successTitle}>Report Submitted</Text>
+          <Text style={styles.successSubtitle}>
             Thank you for helping your community
           </Text>
         </View>
       </View>
 
       {/* Content */}
-      <View className="px-4 py-6">
+      <View style={styles.content}>
         {/* Reference Number Card */}
-        <View className="bg-gradient-to-r from-blue-50 to-blue-50 border border-blue-200 rounded-md p-4 mb-6">
-          <Text className="text-xs font-semibold text-slate-600 uppercase mb-1">
-            Reference Number
-          </Text>
-          <Text className="text-3xl font-bold text-blue-600 mb-2 font-mono">
-            {report.reference_number}
-          </Text>
-          <Text className="text-xs text-slate-600">
+        <View style={styles.referenceCard}>
+          <Text style={styles.referenceLabel}>Reference Number</Text>
+          <Text style={styles.referenceNumber}>{report.reference_number}</Text>
+          <Text style={styles.referenceHint}>
             Save this number to track your report
           </Text>
         </View>
 
         {/* Report Summary */}
-        <View className="bg-white border border-slate-200 rounded-md p-4 mb-6">
-          <Text className="text-sm font-bold text-slate-900 mb-4 uppercase">
-            Report Summary
-          </Text>
+        <View style={styles.summaryCard}>
+          <Text style={styles.summaryTitle}>Report Summary</Text>
 
-          <View className="mb-4 pb-4 border-b border-slate-200">
-            <Text className="text-xs font-semibold text-slate-500 uppercase mb-1">
-              Title
-            </Text>
-            <Text className="text-base text-slate-900 font-medium">
-              {report.title}
-            </Text>
+          <View style={styles.summaryField}>
+            <Text style={styles.summaryFieldLabel}>Title</Text>
+            <Text style={styles.summaryFieldValue}>{report.title}</Text>
           </View>
 
-          <View className="mb-4 pb-4 border-b border-slate-200">
-            <Text className="text-xs font-semibold text-slate-500 uppercase mb-1">
-              Description
-            </Text>
-            <Text className="text-sm text-slate-700 leading-5">
-              {report.description}
-            </Text>
+          <View style={styles.summaryField}>
+            <Text style={styles.summaryFieldLabel}>Description</Text>
+            <Text style={styles.summaryFieldValue}>{report.description}</Text>
           </View>
 
-          <View className="mb-4 pb-4 border-b border-slate-200">
-            <Text className="text-xs font-semibold text-slate-500 uppercase mb-1">
-              Status
-            </Text>
-            <View className="flex-row items-center">
-              <View className="w-2 h-2 rounded-full bg-amber-500 mr-2" />
-              <Text className="text-sm font-semibold text-slate-900">
+          <View style={styles.summaryField}>
+            <Text style={styles.summaryFieldLabel}>Status</Text>
+            <View style={styles.statusBadge}>
+              <View style={styles.statusDot} />
+              <Text style={styles.statusText}>
                 {report.status === 'NEW' ? 'Reported' : report.status}
               </Text>
             </View>
           </View>
 
-          <View>
-            <Text className="text-xs font-semibold text-slate-500 uppercase mb-1">
-              Submitted
-            </Text>
-            <Text className="text-sm text-slate-900">
+          <View style={styles.summaryField}>
+            <Text style={styles.summaryFieldLabel}>Submitted</Text>
+            <Text style={styles.summaryFieldValue}>
               {formattedDate} at {formattedTime}
             </Text>
           </View>
         </View>
 
         {/* What Happens Next */}
-        <View className="bg-blue-50 border border-blue-200 rounded-md p-4 mb-6">
-          <Text className="text-sm font-semibold text-slate-900 mb-2">
-            What Happens Next
-          </Text>
-          <Text className="text-sm text-slate-700 leading-5">
+        <View style={styles.nextStepsBox}>
+          <Text style={styles.nextStepsTitle}>What Happens Next</Text>
+          <Text style={styles.nextStepsText}>
             Our team will review your report and take appropriate action. You can track the progress of your report using the reference number above.
           </Text>
         </View>
 
         {/* Action Buttons */}
         <TouchableOpacity
-          className="bg-blue-600 rounded-md py-3 items-center justify-center mb-3"
+          style={styles.primaryButton}
           onPress={() => {
             router.push('/');
           }}
           accessibilityLabel="Go home"
         >
-          <Text className="text-white text-base font-semibold">Go Home</Text>
+          <Text style={styles.primaryButtonText}>Go Home</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
-          className="border border-blue-600 rounded-md py-3 items-center justify-center"
+          style={styles.secondaryButton}
           onPress={() => {
             router.push('/create-report');
           }}
           accessibilityLabel="Create another report"
         >
-          <Text className="text-blue-600 text-base font-semibold">
-            Create Another Report
-          </Text>
+          <Text style={styles.secondaryButtonText}>Create Another Report</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.neutral[50],
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: colors.neutral[50],
+  },
+  loadingText: {
+    marginTop: spacing[3],
+    ...typography.body,
+    color: colors.neutral[600],
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: colors.neutral[50],
+    paddingHorizontal: spacing[4],
+  },
+  errorContent: {
+    alignItems: 'center',
+  },
+  errorTitle: {
+    ...typography.sectionHeading,
+    color: colors.neutral[900],
+    marginBottom: spacing[2],
+  },
+  errorMessage: {
+    ...typography.body,
+    color: colors.neutral[600],
+    textAlign: 'center',
+    marginBottom: spacing[6],
+  },
+  retryButton: {
+    backgroundColor: colors.primary[600],
+    paddingHorizontal: spacing[6],
+    paddingVertical: spacing[2],
+    borderRadius: borderRadius.md,
+  },
+  retryButtonText: {
+    color: colors.neutral[0],
+    ...typography.small,
+    fontWeight: '600',
+  },
+  successSection: {
+    backgroundColor: colors.neutral[0],
+    borderBottomWidth: 1,
+    borderBottomColor: colors.neutral[200],
+  },
+  successContent: {
+    paddingVertical: spacing[8],
+    alignItems: 'center',
+  },
+  successIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: borderRadius.full,
+    backgroundColor: colors.success[50],
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: spacing[3],
+  },
+  checkIcon: {
+    fontSize: 28,
+  },
+  successTitle: {
+    ...typography.pageTitle,
+    color: colors.neutral[900],
+    textAlign: 'center',
+  },
+  successSubtitle: {
+    ...typography.body,
+    color: colors.neutral[600],
+    textAlign: 'center',
+    marginTop: spacing[1],
+  },
+  content: {
+    paddingHorizontal: spacing[4],
+    paddingVertical: spacing[6],
+  },
+  referenceCard: {
+    backgroundColor: colors.primary[50],
+    borderWidth: 1,
+    borderColor: colors.primary[200],
+    borderRadius: borderRadius.md,
+    paddingHorizontal: spacing[4],
+    paddingVertical: spacing[4],
+    marginBottom: spacing[6],
+  },
+  referenceLabel: {
+    ...typography.small,
+    fontWeight: '600',
+    color: colors.neutral[600],
+    marginBottom: spacing[1],
+  },
+  referenceNumber: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: colors.primary[600],
+    marginBottom: spacing[2],
+    fontFamily: 'Courier New',
+  },
+  referenceHint: {
+    ...typography.small,
+    color: colors.neutral[600],
+  },
+  summaryCard: {
+    backgroundColor: colors.neutral[0],
+    borderWidth: 1,
+    borderColor: colors.neutral[200],
+    borderRadius: borderRadius.md,
+    paddingHorizontal: spacing[4],
+    paddingVertical: spacing[4],
+    marginBottom: spacing[6],
+  },
+  summaryTitle: {
+    ...typography.small,
+    fontWeight: 'bold',
+    color: colors.neutral[900],
+    marginBottom: spacing[4],
+  },
+  summaryField: {
+    paddingBottom: spacing[4],
+    marginBottom: spacing[4],
+    borderBottomWidth: 1,
+    borderBottomColor: colors.neutral[200],
+  },
+  summaryFieldLabel: {
+    ...typography.small,
+    fontWeight: '600',
+    color: colors.neutral[500],
+    marginBottom: spacing[1],
+  },
+  summaryFieldValue: {
+    ...typography.body,
+    color: colors.neutral[900],
+  },
+  statusBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  statusDot: {
+    width: 8,
+    height: 8,
+    borderRadius: borderRadius.full,
+    backgroundColor: colors.warning[500],
+    marginRight: spacing[2],
+  },
+  statusText: {
+    ...typography.small,
+    fontWeight: '600',
+    color: colors.neutral[900],
+  },
+  nextStepsBox: {
+    backgroundColor: colors.primary[50],
+    borderWidth: 1,
+    borderColor: colors.primary[200],
+    borderRadius: borderRadius.md,
+    paddingHorizontal: spacing[4],
+    paddingVertical: spacing[4],
+    marginBottom: spacing[6],
+  },
+  nextStepsTitle: {
+    ...typography.small,
+    fontWeight: 'bold',
+    color: colors.neutral[900],
+    marginBottom: spacing[2],
+  },
+  nextStepsText: {
+    ...typography.small,
+    color: colors.neutral[700],
+    lineHeight: 20,
+  },
+  primaryButton: {
+    backgroundColor: colors.primary[600],
+    borderRadius: borderRadius.md,
+    paddingVertical: spacing[3],
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: spacing[3],
+    minHeight: 50,
+  },
+  primaryButtonText: {
+    color: colors.neutral[0],
+    ...typography.cardHeading,
+  },
+  secondaryButton: {
+    borderWidth: 1,
+    borderColor: colors.primary[600],
+    borderRadius: borderRadius.md,
+    paddingVertical: spacing[3],
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 50,
+  },
+  secondaryButtonText: {
+    color: colors.primary[600],
+    ...typography.cardHeading,
+  },
+});
