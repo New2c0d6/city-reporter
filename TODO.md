@@ -746,7 +746,7 @@ Notes:
 
 ## TASK-201 — Create basic report form (without media/location)
 
-Status: TODO
+Status: DONE
 Phase: 2
 
 Goal:
@@ -785,7 +785,7 @@ Notes:
 
 ## TASK-202 — Add error handling and loading states to report form
 
-Status: TODO
+Status: DONE
 Phase: 2
 
 Goal:
@@ -818,7 +818,7 @@ Notes:
 
 ## TASK-203 — Create confirmation/success screen after report submission
 
-Status: TODO
+Status: DONE
 Phase: 2
 
 Goal:

@@ -18,6 +18,13 @@ export default function CitizenLayout() {
           headerShown: true,
         }}
       />
+      <Stack.Screen
+        name="confirmation"
+        options={{
+          title: 'Report Submitted',
+          headerShown: true,
+        }}
+      />
     </Stack>
   );
 }
